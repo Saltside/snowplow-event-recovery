@@ -1,1 +1,1 @@
-# snowplow_event_recovery
+# snowplow-event-recovery
