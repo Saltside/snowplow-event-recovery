@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+main() {
+  aws emr create-cluster --applications Name=Hadoop --ec2-attributes '{
+    "InstanceProfile":"EMR_EC2_DefaultRole",
+    "AvailabilityZone":"eu-west-1b"
+}' --service-role EMR_DefaultRole --enable-debugging --release-label emr-4.3.0 --log-uri 's3n://saltside-de-snowplow-troubleshoot/recovery/logs/cluster/' --steps '[
+  {
+    "Args":[
+        "--src",
+        "s3n://saltside-de-snowplow-troubleshoot/recovery/bad/",
+        "--dest",
+        "hdfs:///local/monthly/",
+        "--targetSize",
+        "128",
+        "--outputCodec",
+        "lzo"
+    ],
+    "Type":"CUSTOM_JAR",
+    "ActionOnFailure":"TERMINATE_CLUSTER",
+    "Jar":"/usr/share/aws/emr/s3-dist-cp/lib/s3-dist-cp.jar",
+    "Name":"Combine Months"
+  },
+  {
+    "Args":[
+        "com.snowplowanalytics.hadoop.scalding.SnowplowEventRecoveryJob",
+        "--hdfs",
+        "--input",
+        "hdfs:///local/monthly/*",
+        "--output",
+        "hdfs:///local/recovery/",
+        "--inputFormat",
+        "bad",
+        "--script",
+        "ZnVuY3Rpb24gcHJvY2VzcyhldmVudCwgZXJyb3JzKSB7CiAgdmFyIGZpZWxkcyA9IHRzdlRvQXJyYXkoZXZlbnQpOwogICAgaWYgKGZpZWxkc1s1XSA9PSAnR0VUJykgewogICAgICAgIHZhciBxdWVyeXN0cmluZyA9IHBhcnNlUXVlcnlzdHJpbmcoZmllbGRzWzExXSk7CiAgICAgICAgcXVlcnlzdHJpbmdbJ3AnXSA9ICdtb2InOwogICAgICAgIGZpZWxkc1sxMV0gPSBidWlsZFF1ZXJ5c3RyaW5nKHF1ZXJ5c3RyaW5nKTsKICAgIH0KICAgIHJldHVybiBhcnJheVRvVHN2KGZpZWxkcyk7Cn0KCg=="    ],
+    "Type":"CUSTOM_JAR",
+    "ActionOnFailure":"CONTINUE",
+    "Jar":"s3://snowplow-hosted-assets/3-enrich/hadoop-event-recovery/snowplow-hadoop-event-recovery-0.2.0.jar",
+    "Name":"Fix up bad rows"
+  },
+  {
+    "Args":[
+        "--src",
+        "hdfs:///local/recovery/",
+        "--dest",
+        "s3n://saltside-de-snowplow-troubleshoot/recovery/good/"
+    ],
+    "Type":"CUSTOM_JAR",
+    "ActionOnFailure":"TERMINATE_CLUSTER",
+    "Jar":"/usr/share/aws/emr/s3-dist-cp/lib/s3-dist-cp.jar",
+    "Name":"Back to S3"
+  }
+  ]' --name 'Efritin-Snowplow-Recovery-Cluster' --instance-groups '[
+    {
+        "InstanceCount":1,
+        "InstanceGroupType":"MASTER",
+        "InstanceType":"m3.xlarge",
+        "Name":"MASTER"
+    },
+    {
+        "InstanceCount":2,
+        "InstanceGroupType":"CORE",
+        "InstanceType":"m3.2xlarge",
+        "Name":"CORE"
+    }
+ ]'
+}
+
+main "$@"
