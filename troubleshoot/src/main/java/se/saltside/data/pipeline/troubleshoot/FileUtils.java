@@ -10,6 +10,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,61 +23,11 @@ import java.util.Scanner;
  */
 public class FileUtils {
 
-	/**
-	 * @param args
-	 * @throws IOException
-	 */
-	public static void main(String[] args) throws IOException {
-		String listOfFolderPath = "";
-		String badInputFolder = "";
-		String badOutPutFolderAfterRename = "";
-		if (args != null && args.length > 0) {
-			listOfFolderPath = args[0];
-			badInputFolder = args[1];
-			badOutPutFolderAfterRename = args[2];
-			if (listOfFolderPath == "" && badInputFolder == ""
-					&& badOutPutFolderAfterRename == "") {
-				System.out.println("argument required");
-				return;
-			}
-			process(listOfFolderPath, badInputFolder,
-					badOutPutFolderAfterRename);
-			System.out.println("Process Done");
-		} else {
-			System.out.println("Pass the argument");
-		}
-		readfile();
-		System.out.println("Reading Done");
-
-	}
-
-	private static void readfile() throws FileNotFoundException {
-		
-		File folder = new File("/Users/kumarvivek/Git/snowplow-event-recovery/folder2/");
+	public static File[] readfile() {
+		File folder = new File(
+				"/home/brijeshsingh/Desktop/test/badFile/");
 		File[] listOfFiles = folder.listFiles();
-		List<String> lines = new ArrayList<String>();
-		for (File file : listOfFiles) {
-
-			if (file.isFile() && file.getName().startsWith("run")) {
-	
-				String filename = file.getName();
-				InputStreamReader br = new InputStreamReader(
-						new FileInputStream("/Users/kumarvivek/Git/snowplow-event-recovery/folder2/" + filename),
-						StandardCharsets.UTF_8);
-				
-				Scanner scanner = new Scanner(br);
-				
-				while (scanner.hasNext()) {
-					String string = (String) scanner.next();
-					lines.add(string);
-				}
-				System.out.println(lines);
-				scanner.close();
-			
-			}
-
-		}
-		
+		return listOfFiles;
 	}
 
 	/**
@@ -85,7 +37,7 @@ public class FileUtils {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	private static void process(String listOfFolderPath, String badInputFolder,
+	public static void process(String listOfFolderPath, String badInputFolder,
 			String badOutPutFolderAfterRename) throws FileNotFoundException,
 			IOException {
 		File file = new File(listOfFolderPath);
@@ -153,6 +105,33 @@ public class FileUtils {
 			file.renameTo(new File(newPath, newName));
 			System.out.println(file.getName() + " changed to " + newName);
 		}
+	}
+
+	/**
+	 * @param objects
+	 * @param fileName
+	 */
+	public static void write(List<String> objects, String fileName) {
+		try {
+			@SuppressWarnings("resource")
+			PrintWriter writer = new PrintWriter(
+					"/home/brijeshsingh/Desktop/test/afterEnrichment/"+fileName,
+					"UTF-8");
+			for (String object : objects) {
+				writer.println(object);
+			}
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @return
+	 */
+	public static List<String> read() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
