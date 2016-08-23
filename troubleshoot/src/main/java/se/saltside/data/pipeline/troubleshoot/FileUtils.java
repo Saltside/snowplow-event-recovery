@@ -5,17 +5,21 @@ package se.saltside.data.pipeline.troubleshoot;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * @author brijeshsingh - 21-Aug-2016
  * 
  */
-public class RenameBadFile {
+public class FileUtils {
 
 	/**
 	 * @param args
@@ -40,7 +44,38 @@ public class RenameBadFile {
 		} else {
 			System.out.println("Pass the argument");
 		}
+		readfile();
+		System.out.println("Reading Done");
 
+	}
+
+	private static void readfile() throws FileNotFoundException {
+		
+		File folder = new File("/Users/kumarvivek/Git/snowplow-event-recovery/folder2/");
+		File[] listOfFiles = folder.listFiles();
+		List<String> lines = new ArrayList<String>();
+		for (File file : listOfFiles) {
+
+			if (file.isFile() && file.getName().startsWith("run")) {
+	
+				String filename = file.getName();
+				InputStreamReader br = new InputStreamReader(
+						new FileInputStream("/Users/kumarvivek/Git/snowplow-event-recovery/folder2/" + filename),
+						StandardCharsets.UTF_8);
+				
+				Scanner scanner = new Scanner(br);
+				
+				while (scanner.hasNext()) {
+					String string = (String) scanner.next();
+					lines.add(string);
+				}
+				System.out.println(lines);
+				scanner.close();
+			
+			}
+
+		}
+		
 	}
 
 	/**
