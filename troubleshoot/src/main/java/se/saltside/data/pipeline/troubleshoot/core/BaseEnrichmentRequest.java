@@ -17,7 +17,7 @@ public abstract class BaseEnrichmentRequest {
 	public abstract String[] tsvToArray(String event);
 	public abstract String arrayToTsv(String[] event);
 	public abstract Map<String, String> parseQuerystring(String eventQuery) throws UnsupportedEncodingException;
-	public abstract String buildQuerystring(Map<String, String> fields);
+	public abstract String buildQuerystring(Map<String, String> fields) throws UnsupportedEncodingException;
 	
 	public Map<String,String> parseJSON(String jsonString){
 		return null;

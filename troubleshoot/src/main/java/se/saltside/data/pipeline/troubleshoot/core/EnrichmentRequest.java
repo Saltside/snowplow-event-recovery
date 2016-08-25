@@ -5,6 +5,7 @@ package se.saltside.data.pipeline.troubleshoot.core;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -77,10 +78,10 @@ public class EnrichmentRequest extends BaseEnrichmentRequest {
 	 * buildQuerystring(java.lang.String[])
 	 */
 	@Override
-	public String buildQuerystring(Map<String, String> fields) {
+	public String buildQuerystring(Map<String, String> fields) throws UnsupportedEncodingException {
 		List<String> parts = new ArrayList<String>();
 		for (Map.Entry<String, String> field : fields.entrySet()) {
-			parts.add(field.getKey() + "=" + fields.get(field.getKey()));
+			parts.add(URLEncoder.encode(field.getKey(),"UTF-8") + "=" + URLEncoder.encode(fields.get(field.getKey()), "UTF-8"));
 		}
 		return StringUtils.join(parts, "&");
 	}
