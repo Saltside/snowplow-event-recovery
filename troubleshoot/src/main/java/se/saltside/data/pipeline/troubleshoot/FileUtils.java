@@ -5,17 +5,13 @@ package se.saltside.data.pipeline.troubleshoot;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * @author brijeshsingh - 21-Aug-2016
@@ -24,8 +20,7 @@ import java.util.Scanner;
 public class FileUtils {
 
 	public static File[] readfile() {
-		File folder = new File(
-				"/home/brijeshsingh/Desktop/test/badFile/");
+		File folder = new File("/home/brijeshsingh/Desktop/test/badFile/");
 		File[] listOfFiles = folder.listFiles();
 		return listOfFiles;
 	}
@@ -115,8 +110,8 @@ public class FileUtils {
 		try {
 			@SuppressWarnings("resource")
 			PrintWriter writer = new PrintWriter(
-					"/home/brijeshsingh/Desktop/test/afterEnrichment/"+fileName,
-					"UTF-8");
+					"/home/brijeshsingh/Desktop/test/afterEnrichment/"
+							+ fileName, "UTF-8");
 			for (String object : objects) {
 				writer.println(object);
 			}

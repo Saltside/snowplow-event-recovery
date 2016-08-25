@@ -20,9 +20,9 @@ import org.json.simple.parser.ParseException;
 public class Test {
 
 	public static void main(String[] args) throws IOException {
-		String FileName="/home/brijeshsingh/Desktop/test/badFile/run=2016-08-02-04-03-21-part-00008 (copy)";
-	    try {
-			ArrayList<JSONObject> jsons=readJSON(new File(FileName),"UTF-8");
+		String FileName = "/home/brijeshsingh/Desktop/test/badFile/run=2016-08-02-04-03-21-part-00008 (copy)";
+		try {
+			ArrayList<JSONObject> jsons = readJSON(new File(FileName), "UTF-8");
 			for (JSONObject jsonObject : jsons) {
 				System.out.println(jsonObject.toJSONString());
 			}
@@ -35,19 +35,21 @@ public class Test {
 	 * @param file
 	 * @param string
 	 * @return
-	 * @throws FileNotFoundException 
-	 * @throws ParseException 
+	 * @throws FileNotFoundException
+	 * @throws ParseException
 	 */
-	private static synchronized ArrayList<JSONObject> readJSON(File MyFile, String Encoding) throws FileNotFoundException, ParseException {
-		
+	private static synchronized ArrayList<JSONObject> readJSON(File MyFile,
+			String Encoding) throws FileNotFoundException, ParseException {
+
 		@SuppressWarnings("resource")
-		Scanner scn=new Scanner(MyFile,Encoding);
-	    ArrayList<JSONObject> json=new ArrayList<JSONObject>();
-	    while(scn.hasNext()){
-	        JSONObject obj= (JSONObject) new JSONParser().parse(scn.nextLine());
-	        json.add(obj);
-	    }
-	    return json;
+		Scanner scn = new Scanner(MyFile, Encoding);
+		ArrayList<JSONObject> json = new ArrayList<JSONObject>();
+		while (scn.hasNext()) {
+			JSONObject obj = (JSONObject) new JSONParser()
+					.parse(scn.nextLine());
+			json.add(obj);
+		}
+		return json;
 	}
 
 }

@@ -5,8 +5,6 @@ package se.saltside.data.pipeline.troubleshoot;
 
 import java.io.IOException;
 
-import org.json.JSONException;
-
 import se.saltside.data.pipeline.troubleshoot.core.EnrichmentRequest;
 import se.saltside.data.pipeline.troubleshoot.core.Processor;
 import se.saltside.data.pipeline.troubleshoot.core.RecoveryProcessor;
@@ -16,7 +14,7 @@ import se.saltside.data.pipeline.troubleshoot.core.RecoveryProcessor;
  * 
  */
 public class Enrichment {
-	public static void main(String[] args){
+	public static void main(String[] args) {
 		String foldersName = "";
 		String badInputFolder = "";
 		String badOutPutFolderAfterRename = "";
@@ -41,7 +39,6 @@ public class Enrichment {
 		}
 		Processor<EnrichmentRequest> processor = new RecoveryProcessor();
 		processor.execute(new EnrichmentRequest());
-		
+
 	}
 }
-

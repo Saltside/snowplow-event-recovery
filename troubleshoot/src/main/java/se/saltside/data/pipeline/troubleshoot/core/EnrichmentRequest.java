@@ -4,8 +4,6 @@
 package se.saltside.data.pipeline.troubleshoot.core;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -65,8 +63,7 @@ public class EnrichmentRequest extends BaseEnrichmentRequest {
 			if (array[1] == null || array[1] == "") {
 				array[1] = "";
 			}
-			query.put(URLDecoder.decode(array[0], "UTF-8"),
-					URLDecoder.decode(array[1], "UTF-8"));
+			query.put(decodeBase64(array[0]), decodeBase64(array[1]));
 		}
 		return query;
 	}
@@ -78,21 +75,25 @@ public class EnrichmentRequest extends BaseEnrichmentRequest {
 	 * buildQuerystring(java.lang.String[])
 	 */
 	@Override
-	public String buildQuerystring(Map<String, String> fields) throws UnsupportedEncodingException {
+	public String buildQuerystring(Map<String, String> fields)
+			throws UnsupportedEncodingException {
 		List<String> parts = new ArrayList<String>();
 		for (Map.Entry<String, String> field : fields.entrySet()) {
-			parts.add(URLEncoder.encode(field.getKey(),"UTF-8") + "=" + URLEncoder.encode(fields.get(field.getKey()), "UTF-8"));
+			parts.add(encodeBase64(field.getKey()) + "="
+					+ encodeBase64(fields.get(field.getKey())));
 		}
 		return StringUtils.join(parts, "&");
 	}
-	
-	public String process(String jsonObj) throws JSONException, UnsupportedEncodingException{
+
+	public String process(String jsonObj) throws JSONException,
+			UnsupportedEncodingException {
 		JSONObject jsonObject = new JSONObject(jsonObj);
 		JSONArray array = new JSONArray(jsonObject.getString("errors"));
-		if(new JSONObject(array.get(0).toString()).get("message").toString().contains("is not a supported tracking platform")){
+		if (new JSONObject(array.get(0).toString()).get("message").toString()
+				.contains("is not a supported tracking platform")) {
 			String[] fields = tsvToArray(jsonObject.getString("line"));
-			if(fields[5].equals("GET")){
-				Map<String,String> querystringDict = parseQuerystring(fields[11]);
+			if (fields[5].equals("GET")) {
+				Map<String, String> querystringDict = parseQuerystring(fields[11]);
 				querystringDict.put("p", "mob");
 				fields[11] = buildQuerystring(querystringDict);
 			}
@@ -100,6 +101,7 @@ public class EnrichmentRequest extends BaseEnrichmentRequest {
 		}
 		return null;
 	}
+
 	public static EnrichmentRequest getInstance() {
 		if (EnrichmentRequestINSTANCE == null)
 			synchronized (EnrichmentRequest.class) {
