@@ -26,9 +26,8 @@ public class EnrichmentRequest extends BaseEnrichmentRequest {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * se.saltside.data.pipeline.troubleshoot.core.BaseEnrichmentRequest#tsvToArray
-	 * (java.lang.String)
+	 * @see se.saltside.data.pipeline.troubleshoot.core.BaseEnrichmentRequest#
+	 * tsvToArray (java.lang.String)
 	 */
 	@Override
 	public String[] tsvToArray(String event) {
@@ -38,9 +37,8 @@ public class EnrichmentRequest extends BaseEnrichmentRequest {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * se.saltside.data.pipeline.troubleshoot.core.BaseEnrichmentRequest#arrayToTsv
-	 * (java.lang.String[])
+	 * @see se.saltside.data.pipeline.troubleshoot.core.BaseEnrichmentRequest#
+	 * arrayToTsv (java.lang.String[])
 	 */
 	@Override
 	public String arrayToTsv(String[] eventTsv) {
@@ -54,17 +52,18 @@ public class EnrichmentRequest extends BaseEnrichmentRequest {
 	 * parseQuerystring(java.lang.String)
 	 */
 	@Override
-	public Map<String, String> parseQuerystring(String eventQuery)
-			throws UnsupportedEncodingException {
+	public Map<String, String> parseQuerystring(String eventQuery) throws UnsupportedEncodingException {
 		Map<String, String> query = new HashMap<String, String>();
 		String[] arr = eventQuery.split("&");
-		for (int i = 0; i < arr.length; i++) {
-			String[] array = arr[i].split("=");
-			if (array[1] == null || array[1] == "") {
-				array[1] = "";
+		for (String string : arr) {
+			String[] array = string.split("=");
+			if (array.length == 2) {
+				query.put(decodeBase64(array[0]), decodeBase64(array[1]));
+			} else {
+				query.put(decodeBase64(array[0]), decodeBase64(""));
 			}
-			query.put(decodeBase64(array[0]), decodeBase64(array[1]));
 		}
+
 		return query;
 	}
 
@@ -75,18 +74,15 @@ public class EnrichmentRequest extends BaseEnrichmentRequest {
 	 * buildQuerystring(java.lang.String[])
 	 */
 	@Override
-	public String buildQuerystring(Map<String, String> fields)
-			throws UnsupportedEncodingException {
+	public String buildQuerystring(Map<String, String> fields) throws UnsupportedEncodingException {
 		List<String> parts = new ArrayList<String>();
 		for (Map.Entry<String, String> field : fields.entrySet()) {
-			parts.add(encodeBase64(field.getKey()) + "="
-					+ encodeBase64(fields.get(field.getKey())));
+			parts.add(encodeBase64(field.getKey()) + "=" + encodeBase64(fields.get(field.getKey())));
 		}
 		return StringUtils.join(parts, "&");
 	}
 
-	public String process(String jsonObj) throws JSONException,
-			UnsupportedEncodingException {
+	public String process(String jsonObj) throws JSONException, UnsupportedEncodingException {
 		JSONObject jsonObject = new JSONObject(jsonObj);
 		JSONArray array = new JSONArray(jsonObject.getString("errors"));
 		if (new JSONObject(array.get(0).toString()).get("message").toString()
