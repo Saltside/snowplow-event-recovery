@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,32 +17,12 @@ import java.util.List;
  * @author brijeshsingh - 21-Aug-2016
  * 
  */
-public class RenameBadFile {
+public class FileUtils {
 
-	/**
-	 * @param args
-	 * @throws IOException
-	 */
-	public static void main(String[] args) throws IOException {
-		String listOfFolderPath = "";
-		String badInputFolder = "";
-		String badOutPutFolderAfterRename = "";
-		if (args != null && args.length > 0) {
-			listOfFolderPath = args[0];
-			badInputFolder = args[1];
-			badOutPutFolderAfterRename = args[2];
-			if (listOfFolderPath == "" && badInputFolder == ""
-					&& badOutPutFolderAfterRename == "") {
-				System.out.println("argument required");
-				return;
-			}
-			process(listOfFolderPath, badInputFolder,
-					badOutPutFolderAfterRename);
-			System.out.println("Process Done");
-		} else {
-			System.out.println("Pass the argument");
-		}
-
+	public static File[] readfile() {
+		File folder = new File("/home/brijeshsingh/Desktop/test/badFile/");
+		File[] listOfFiles = folder.listFiles();
+		return listOfFiles;
 	}
 
 	/**
@@ -50,7 +32,7 @@ public class RenameBadFile {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	private static void process(String listOfFolderPath, String badInputFolder,
+	public static void process(String listOfFolderPath, String badInputFolder,
 			String badOutPutFolderAfterRename) throws FileNotFoundException,
 			IOException {
 		File file = new File(listOfFolderPath);
@@ -118,6 +100,33 @@ public class RenameBadFile {
 			file.renameTo(new File(newPath, newName));
 			System.out.println(file.getName() + " changed to " + newName);
 		}
+	}
+
+	/**
+	 * @param objects
+	 * @param fileName
+	 */
+	public static void write(List<String> objects, String fileName) {
+		try {
+			@SuppressWarnings("resource")
+			PrintWriter writer = new PrintWriter(
+					"/home/brijeshsingh/Desktop/test/afterEnrichment/"
+							+ fileName, "UTF-8");
+			for (String object : objects) {
+				writer.println(object);
+			}
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @return
+	 */
+	public static List<String> read() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
